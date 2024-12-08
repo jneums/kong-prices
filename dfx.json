@@ -1,0 +1,27 @@
+{
+  "canisters": {
+    "kong-prices-backend": {
+      "candid": "src/kong-prices-backend/kong-prices-backend.did",
+      "package": "kong-prices-backend",
+      "type": "rust"
+    },
+    "kong-prices-frontend": {
+      "dependencies": [
+        "kong-prices-backend"
+      ],
+      "source": [
+        "src/kong-prices-frontend/dist"
+      ],
+      "type": "assets",
+      "workspace": "kong-prices-frontend"
+    }
+  },
+  "defaults": {
+    "build": {
+      "args": "",
+      "packtool": ""
+    }
+  },
+  "output_env_file": ".env",
+  "version": 1
+}
