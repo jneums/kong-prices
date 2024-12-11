@@ -36,14 +36,6 @@ actor {
     currentPrice : Float;
   };
 
-  public shared query func getStatus() : async Status {
-    return {
-      mostRecentTxId = debug_show (mostRecentTxId);
-      earliestTxId = debug_show (earliestTxId);
-      isSyncing = loopTimer != null;
-    };
-  };
-
   public shared query func getTokens() : async [Text] {
     return Iter.toArray(Map.keys(historicalPrices));
   };
@@ -139,12 +131,6 @@ actor {
         },
       )
     );
-  };
-
-  // Public method to start the synchronization process
-  public shared func startSync(fullScan : Bool) : async () {
-    Debug.print("Initiating transaction sync...");
-    ignore syncTransactions(fullScan);
   };
 
   private func syncTransactions(fullScan : Bool) : async () {
@@ -419,14 +405,6 @@ actor {
     };
   };
 
-  public shared func startTimer() : async () {
-    startSystemLoop<system>();
-  };
-
-  public shared func stopTimer() : async () {
-    stopSystemLoop();
-  };
-
   // Start the recurring system loop
   private func startSystemLoop<system>() {
     let tickRate = #seconds(60);
@@ -460,7 +438,6 @@ actor {
     try {
 
       await syncTransactions(false); // Fetch new transactions
-      await syncTransactions(true); // Fetch previous transactions
       await getPricesFromPools(); // Fetch prices from pools
     } catch (e) {
       Debug.print("Error in system loop: " # debug_show (Error.message(e)));

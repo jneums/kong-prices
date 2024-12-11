@@ -1,21 +1,7 @@
 import { useQuery } from 'react-query';
 import { be } from '../declarations/be';
-import { PriceInfo, Status, SwapTransaction } from '../declarations/be/be.did';
+import { PriceInfo, SwapTransaction } from '../declarations/be/be.did';
 import { toNullable } from '@dfinity/utils';
-
-export const getStatus = {
-  key: () => ['getStatus'],
-  fn: async () => {
-    const response = await be.getStatus();
-    return response;
-  },
-};
-
-export const useGetStatus = () => {
-  return useQuery<Status>(getStatus.key(), getStatus.fn, {
-    refetchInterval: 10000,
-  });
-};
 
 export const getTokens = {
   key: () => ['getTokens'],
