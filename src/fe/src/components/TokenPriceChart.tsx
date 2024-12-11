@@ -111,7 +111,7 @@ const TokenPriceChart: React.FC<TokenPriceChartProps> = React.memo(
               // Format the value as a dollar amount with 2 to 6 decimal places
               return `$${value.toLocaleString(undefined, {
                 minimumFractionDigits: 0,
-                maximumFractionDigits: 4,
+                maximumFractionDigits: 6,
               })}`;
             },
           },

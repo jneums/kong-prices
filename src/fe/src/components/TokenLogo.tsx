@@ -28,11 +28,13 @@ export default function TokenLogo({
     ].includes(symbol)
       ? 'svg'
       : 'png';
+
+  const path =
+    extension === 'svg'
+      ? `/tokens/${symbol}.${extension}`
+      : `/tokens/${symbol}_48x48.${extension}`;
   return (
-    <Avatar
-      src={`/tokens/${symbol}.${extension}`}
-      variant="soft"
-      {...avatarProps}>
+    <Avatar src={path} variant="soft" {...avatarProps}>
       <CurrencyBitcoin />
     </Avatar>
   );
