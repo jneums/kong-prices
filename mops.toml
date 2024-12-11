@@ -1,0 +1,4 @@
+[dependencies]
+base = "0.13.0"
+stable-hash-map = "0.0.1"
+vector = "0.4.1"

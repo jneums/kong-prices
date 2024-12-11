@@ -1,25 +1,26 @@
 {
   "canisters": {
-    "kong-prices-backend": {
-      "candid": "src/kong-prices-backend/kong-prices-backend.did",
-      "package": "kong-prices-backend",
-      "type": "rust"
+    "be": {
+      "main": "src/be/main.mo",
+      "type": "motoko",
+      "specified_id": "tqway-uaaaa-aaaai-q3nra-cai"
     },
-    "kong-prices-frontend": {
+    "fe": {
       "dependencies": [
-        "kong-prices-backend"
+        "be"
       ],
       "source": [
-        "src/kong-prices-frontend/dist"
+        "src/fe/dist"
       ],
       "type": "assets",
-      "workspace": "kong-prices-frontend"
+      "workspace": "fe",
+      "specified_id": "txxgm-zyaaa-aaaai-q3nrq-cai"
     }
   },
   "defaults": {
     "build": {
       "args": "",
-      "packtool": ""
+      "packtool": "mops sources"
     }
   },
   "output_env_file": ".env",
