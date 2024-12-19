@@ -30,13 +30,19 @@ interface TokenPriceChartProps {
 
 const TokenPriceChart: React.FC<TokenPriceChartProps> = React.memo(
   ({ token, range }) => {
-    const getHistoricalPrices = useGetHistoricalPrices(token, range);
-    const data = getHistoricalPrices.data || [];
-    const changeValue =
-      data.length > 1 ? data[data.length - 1].price - data[0].price : 0;
     const theme = useTheme();
+    const getHistoricalPrices = useGetHistoricalPrices([token], range);
+    const data = getHistoricalPrices.data || [];
+    const tokenData =
+      getHistoricalPrices.data?.length && getHistoricalPrices.data.length > 0
+        ? data[0][1]
+        : [];
+    const sorted = tokenData.sort((a, b) => Number(a.ts - b.ts));
 
-    const sorted = data.sort((a, b) => Number(a.ts - b.ts));
+    const priceChange =
+      tokenData.length && tokenData.length > 1
+        ? tokenData[tokenData.length - 1].price - tokenData[0].price
+        : 0;
 
     // If there's only one data point, duplicate it with a slightly different timestamp
     const adjustedData =
@@ -56,7 +62,7 @@ const TokenPriceChart: React.FC<TokenPriceChartProps> = React.memo(
         {
           data: adjustedData.map((entry) => entry.price),
           borderColor:
-            changeValue >= 0
+            priceChange >= 0
               ? theme.palette.success[400]
               : theme.palette.danger[400],
           pointRadius: 0, // Disable the circles around each point

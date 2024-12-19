@@ -16,8 +16,12 @@ export const useGetTokens = () => {
 };
 
 export const getHistoricalPrices = {
-  key: (token: string, range: string) => ['getHistoricalPrices', token, range],
-  fn: async (token: string, range: string) => {
+  key: (tokens: string[], range: string) => [
+    'getHistoricalPrices',
+    tokens,
+    range,
+  ],
+  fn: async (tokens: string[], range: string) => {
     const now = BigInt(Date.now() * 1_000_000); // Convert to nanoseconds
     let startDate: bigint | null = null;
     let granularity: string = 'hour';
@@ -53,7 +57,7 @@ export const getHistoricalPrices = {
     }
 
     const response = await be.getHistoricalPrices(
-      token,
+      tokens,
       toNullable(startDate),
       endDate,
       toNullable(granularity),
@@ -63,12 +67,12 @@ export const getHistoricalPrices = {
 };
 
 export const useGetHistoricalPrices = (
-  token: string,
+  tokens: string[],
   range: string = 'month',
 ) => {
-  return useQuery<SwapTransaction[]>(
-    getHistoricalPrices.key(token, range),
-    () => getHistoricalPrices.fn(token, range),
+  return useQuery<[string, SwapTransaction[]][]>(
+    getHistoricalPrices.key(tokens, range),
+    () => getHistoricalPrices.fn(tokens, range),
     { refetchInterval: 10000 },
   );
 };

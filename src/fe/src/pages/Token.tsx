@@ -27,19 +27,23 @@ export default function Token() {
   }
 
   const getMostRecentPrices = useGetMostRecentPrices();
-  const getHistoricalPrices = useGetHistoricalPrices(token, range);
+  const getHistoricalPrices = useGetHistoricalPrices([token], range);
+
+  const data = getHistoricalPrices.data || [];
+  const tokenData =
+    getHistoricalPrices.data?.length && getHistoricalPrices.data.length > 0
+      ? data[0][1]
+      : [];
 
   const priceChange =
-    getHistoricalPrices.data?.length && getHistoricalPrices.data.length > 1
-      ? getHistoricalPrices.data[getHistoricalPrices.data.length - 1].price -
-        getHistoricalPrices.data[0].price
+    tokenData.length && tokenData.length > 1
+      ? tokenData[tokenData.length - 1].price - tokenData[0].price
       : 0;
 
   const priceChangePercentage =
-    getHistoricalPrices.data?.length && getHistoricalPrices.data.length > 1
-      ? ((getHistoricalPrices.data[getHistoricalPrices.data.length - 1].price -
-          getHistoricalPrices.data[0].price) /
-          getHistoricalPrices.data[0].price) *
+    tokenData?.length && tokenData.length > 1
+      ? ((tokenData[tokenData.length - 1].price - tokenData[0].price) /
+          tokenData[0].price) *
         100
       : 0;
 

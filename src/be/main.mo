@@ -41,11 +41,25 @@ actor {
   };
 
   public shared query func getHistoricalPrices(
+    tokens : [Text],
+    startDate : ?Time.Time,
+    endDate : ?Time.Time,
+    granularity : ?Text,
+  ) : async [(Text, [T.SwapTransaction])] {
+    let res = Vector.new<(Text, [T.SwapTransaction])>();
+    for (token in tokens.vals()) {
+      let txs = getHistoricalPricesForToken(token, startDate, endDate, granularity);
+      Vector.add(res, (token, txs));
+    };
+    return Vector.toArray(res);
+  };
+
+  func getHistoricalPricesForToken(
     token : Text,
     startDate : ?Time.Time,
     endDate : ?Time.Time,
     granularity : ?Text,
-  ) : async [T.SwapTransaction] {
+  ) : [T.SwapTransaction] {
     switch (Map.get(historicalPrices, Map.thash, token)) {
       case (?txs) {
         var filteredTxs = Array.filter<T.SwapTransaction>(
