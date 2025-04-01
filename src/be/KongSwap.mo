@@ -39,6 +39,8 @@ module {
     amount_0 : Nat;
     amount_1 : Nat;
     claim_ids : [Nat64];
+    address_0 : Text;
+    address_1 : Text;
     symbol_0 : Text;
     symbol_1 : Text;
     chain_0 : Text;
@@ -54,7 +56,6 @@ module {
     tx_id_0 : ?TxId;
     tx_id_1 : ?TxId;
     lp_fee_bps : ?Nat8;
-    on_kong : ?Bool;
   };
   public type AddPoolReply = {
     ts : Nat64;
@@ -64,34 +65,25 @@ module {
     lp_token_symbol : Text;
     add_lp_token_amount : Nat;
     transfer_ids : [TransferIdReply];
+    name : Text;
     amount_0 : Nat;
     amount_1 : Nat;
     claim_ids : [Nat64];
+    address_0 : Text;
+    address_1 : Text;
     symbol_0 : Text;
     symbol_1 : Text;
+    pool_id : Nat32;
     chain_0 : Text;
     chain_1 : Text;
+    is_removed : Bool;
     symbol : Text;
     lp_fee_bps : Nat8;
-    on_kong : Bool;
   };
   public type AddPoolResult = { #Ok : AddPoolReply; #Err : Text };
-  public type AddTokenArgs = { token : Text; on_kong : ?Bool };
+  public type AddTokenArgs = { token : Text };
   public type AddTokenReply = { #IC : ICTokenReply };
   public type AddTokenResult = { #Ok : AddTokenReply; #Err : Text };
-  public type BalancesReply = {
-    ts : Nat64;
-    usd_balance : Float;
-    balance : Float;
-    name : Text;
-    amount_0 : Float;
-    amount_1 : Float;
-    symbol_0 : Text;
-    symbol_1 : Text;
-    usd_amount_0 : Float;
-    usd_amount_1 : Float;
-    symbol : Text;
-  };
   public type CheckPoolsReply = {
     expected_balance : ExpectedBalance;
     diff_balance : Int;
@@ -107,7 +99,6 @@ module {
   public type ICTokenReply = {
     fee : Nat;
     decimals : Nat8;
-    token : Text;
     token_id : Nat32;
     chain : Text;
     name : Text;
@@ -115,8 +106,8 @@ module {
     icrc1 : Bool;
     icrc2 : Bool;
     icrc3 : Bool;
+    is_removed : Bool;
     symbol : Text;
-    on_kong : Bool;
   };
   public type ICTransferReply = {
     is_send : Bool;
@@ -128,18 +119,34 @@ module {
   };
   public type Icrc10SupportedStandards = { url : Text; name : Text };
   public type Icrc28TrustedOriginsResponse = { trusted_origins : [Text] };
+  public type LPBalancesReply = {
+    ts : Nat64;
+    usd_balance : Float;
+    balance : Float;
+    name : Text;
+    amount_0 : Float;
+    amount_1 : Float;
+    address_0 : Text;
+    address_1 : Text;
+    symbol_0 : Text;
+    symbol_1 : Text;
+    usd_amount_0 : Float;
+    usd_amount_1 : Float;
+    chain_0 : Text;
+    chain_1 : Text;
+    symbol : Text;
+  };
   public type LPTokenReply = {
     fee : Nat;
     decimals : Nat8;
-    token : Text;
     token_id : Nat32;
     chain : Text;
     name : Text;
     address : Text;
     pool_id_of : Nat32;
+    is_removed : Bool;
     total_supply : Nat;
     symbol : Text;
-    on_kong : Bool;
   };
   public type MessagesReply = {
     ts : Nat64;
@@ -173,10 +180,10 @@ module {
     price : Float;
     chain_0 : Text;
     chain_1 : Text;
+    is_removed : Bool;
     symbol : Text;
     rolling_24h_lp_fee : Nat;
     lp_fee_bps : Nat8;
-    on_kong : Bool;
   };
   public type PoolsReply = {
     total_24h_lp_fee : Nat;
@@ -221,6 +228,8 @@ module {
     amount_0 : Nat;
     amount_1 : Nat;
     claim_ids : [Nat64];
+    address_0 : Text;
+    address_1 : Text;
     symbol_0 : Text;
     symbol_1 : Text;
     chain_0 : Text;
@@ -319,6 +328,8 @@ module {
     claim_ids : [Nat64];
     pay_symbol : Text;
     receive_symbol : Text;
+    receive_address : Text;
+    pay_address : Text;
     price : Float;
     pay_chain : Text;
     slippage : Float;
@@ -331,7 +342,9 @@ module {
     receive_amount : Nat;
     pay_symbol : Text;
     receive_symbol : Text;
+    receive_address : Text;
     pool_symbol : Text;
+    pay_address : Text;
     price : Float;
     pay_chain : Text;
     lp_fee : Nat;
@@ -353,18 +366,16 @@ module {
     #RemoveLiquidity : RemoveLiquidityReply;
   };
   public type TxsResult = { #Ok : [TxsReply]; #Err : Text };
-  public type UserBalancesReply = { #LP : BalancesReply };
+  public type UserBalancesReply = { #LP : LPBalancesReply };
   public type UserBalancesResult = { #Ok : [UserBalancesReply]; #Err : Text };
   public type UserReply = {
     account_id : Text;
-    user_name : Text;
     fee_level_expires_at : ?Nat64;
     referred_by : ?Text;
     user_id : Nat32;
     fee_level : Nat8;
     principal_id : Text;
     referred_by_expires_at : ?Nat64;
-    campaign1_flags : [Bool];
     my_referral_code : Text;
   };
   public type UserResult = { #Ok : UserReply; #Err : Text };
@@ -414,13 +425,8 @@ module {
     ) -> async AddLiquiditAmountsResult;
     add_liquidity_async : shared AddLiquidityArgs -> async AddLiquidityAsyncResult;
     add_pool : shared AddPoolArgs -> async AddPoolResult;
+    add_token : shared AddTokenArgs -> async AddTokenResult;
     check_pools : shared () -> async CheckPoolsResult;
-    get_requests : shared query (
-      ?Nat64,
-      ?Nat32,
-      ?Nat16,
-    ) -> async RequestsResult;
-    get_txs : shared query (?Nat64, ?Nat64, ?Nat32, ?Nat16) -> async TxsResult;
     get_user : shared query () -> async UserResult;
     icrc10_supported_standards : shared query () -> async [
       Icrc10SupportedStandards
@@ -428,7 +434,6 @@ module {
     icrc1_name : shared query () -> async Text;
     icrc21_canister_call_consent_message : shared icrc21_consent_message_request -> async icrc21_consent_message_response;
     icrc28_trusted_origins : shared () -> async Icrc28TrustedOriginsResponse;
-    messages : shared query ?Nat64 -> async MessagesResult;
     pools : shared query ?Text -> async PoolsResult;
     remove_liquidity : shared RemoveLiquidityArgs -> async RemoveLiquidityResult;
     remove_liquidity_amounts : shared query (
@@ -443,8 +448,8 @@ module {
     swap_amounts : shared query (Text, Nat, Text) -> async SwapAmountsResult;
     swap_async : shared SwapArgs -> async SwapAsyncResult;
     tokens : shared query ?Text -> async TokensResult;
-    txs : shared query ?Bool -> async TxsResult;
-    user_balances : shared query ?Text -> async UserBalancesResult;
+    txs : shared query ?Text -> async TxsResult;
+    user_balances : shared query Text -> async UserBalancesResult;
     validate_add_liquidity : shared () -> async ValidateAddLiquidityResult;
     validate_remove_liquidity : shared () -> async ValidateRemoveLiquidityResult;
   };

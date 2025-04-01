@@ -170,7 +170,7 @@ actor {
       Debug.print("Stopping at: " # debug_show (stoppingPoint));
 
       try {
-        switch (await data.txs(?false, startingPoint, null, ?LIMIT)) {
+        switch (await data.txs(null, startingPoint, null, ?LIMIT)) {
           case (#Ok(res)) {
             var batchMostRecentTxId : ?Nat64 = null;
             var batchEarliestTxId : ?Nat64 = null;
@@ -451,8 +451,8 @@ actor {
     Debug.print("Executing system loop...");
     try {
 
-      await syncTransactions(false); // Fetch new transactions
       await getPricesFromPools(); // Fetch prices from pools
+      await syncTransactions(false); // Fetch new transactions
     } catch (e) {
       Debug.print("Error in system loop: " # debug_show (Error.message(e)));
     };
